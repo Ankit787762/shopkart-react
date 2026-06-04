@@ -1,11 +1,18 @@
+import { useNavigate } from "react-router-dom";
 import Navbarpage from "../components/navbar";
+
+
 function HomePage(){
+
+    const navigate = useNavigate();
+
+
  return(
     <div>
         <Navbarpage/> 
         <div className=" mt-10 flex flex-col gap-7 justify-center items-center">
             <h1 className="text-5xl font-bold">Welcome to ShopKart Best Electronics Store</h1>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Shop Now!</button>
+            <button onClick={()=>navigate("/Productpage")} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Shop Now!</button>
         </div>
 
         <div className="flex justify-center items-center gap-20 mt-20">
