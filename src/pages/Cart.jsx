@@ -6,18 +6,69 @@ import { useEffect, useState } from "react";
 
 function Cartpage(){
 
+
 const [card,setCard] =useState([]);
+const [count,setCount] = useState([]);
+
 
 useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("cart")) || [];
     setCard(saved);
+
+    const savecount = JSON.parse(localStorage.getItem("count"))
+   if (savecount) {
+    const newCount = [...savecount];
+
+       while (newCount.length < saved.length) {
+          newCount.push(1);
+      }
+
+       setCount(newCount);
+      } else {
+      setCount(saved.map(() => 1));
+      }
   }, []);
 
     const removeItem = (index) => {
+    //update cards
     const updated = card.filter((_, i) => i !== index);
     setCard(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
+
+    //update count
+    const updatecount = count.filter((_,i)=>i!==index );
+    setCount(updatecount);
+     localStorage.setItem("count", JSON.stringify(updatecount));
   };
+
+     useEffect(()=>{
+        if(count.length > 0){
+        localStorage.setItem("count",JSON.stringify(count));
+        }
+  },[count])
+
+    function decrease(index){
+        const updatecount = [...count];
+        if(updatecount[index]>1){
+        updatecount[index]--;
+        setCount(updatecount);
+        }
+  }
+
+  function increase(index){
+        const updatecount = [...count];
+
+        updatecount[index]++;
+        setCount(updatecount);
+  }
+
+  let totalitem =0;
+  let totalprice =0;
+
+  card.forEach((item,index)=>{
+    totalitem = totalitem+count[index]||1;
+    totalprice =totalprice+item.price*(count[index]||1);
+  })
 
  return (
     <div>
@@ -41,9 +92,9 @@ useEffect(() => {
       <p className="text-green-600 font-bold mt-1">${item.price}</p>
 
       <div className="flex items-center gap-3 mt-3">
-        <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
-        <span className="text-sm font-medium">1</span>
-        <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
+        <button onClick={()=>decrease(index)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
+        <span className="text-sm font-medium">{count[index]}</span>
+        <button onClick={()=>increase(index)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
         </div>
        </div>
 
@@ -52,6 +103,16 @@ useEffect(() => {
         })}
   
  </div>
+
+       <div className="mt-6 border rounded-xl p-5 shadow-md bg-gray-50 w-72 ml-6">
+       <p className="text-lg font-semibold">
+        Total Items: {totalitem}
+        </p>
+
+        <p className="text-xl font-bold text-green-600 mt-2">
+        Total Price: ${totalprice}
+        </p>
+        </div>
     </div>
  )
 }
