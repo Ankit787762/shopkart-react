@@ -1,3 +1,6 @@
+## Preview
+<img width="1906" height="914" alt="image" src="https://github.com/user-attachments/assets/e2255ed5-6914-4a4b-a188-5491ef6dffc7" />
+
 # ShopKart - React E-Commerce Store
 
 ShopKart is a responsive e-commerce web application built using React and Tailwind CSS.
@@ -59,4 +62,4 @@ npm run dev
 
 ## Author
 
-Mohit
+Ankit
