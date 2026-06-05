@@ -10,10 +10,10 @@ function App(){
   <div>
     <Routes>
     <Route path="/" element={<HomePage/>} />
-    <Route path="/Cartpage" element={<Cartpage/>} />
+    <Route path="/Cartpage/" element={<Cartpage/>} />
     <Route path="/Aboutpage" element={<Aboutpage/>} />
     <Route path="/Productpage" element={<Productpage/>} />
-    <Route path="/Productdetailpage" element={<Productdetailspage/>} />
+    <Route path="/Productdetailpage/:id" element={<Productdetailspage/>} />
     
     </Routes>
   </div>

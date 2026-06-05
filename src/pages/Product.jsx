@@ -18,6 +18,12 @@ useEffect(()=>{
     getcard();
 },[]);
 
+const addToCart = (product) => {
+  const oldCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  localStorage.setItem("cart", JSON.stringify([...oldCart, product]));
+  navigate("/Cartpage"); 
+};
  
 
 return(
@@ -36,8 +42,8 @@ return(
             <div className="text-sm font-bold mt-4">{card.title}</div>
             <div className="text-m font-bold mt-4 text-center">Price: ${card.price}</div>
            <div className="flex justify-around gap-5">
-          <button onClick={()=>navigate("/Productdetailpage")} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> View Details </button>
-          <button onClick={()=>navigate("/Cartpage")} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> Add to Cart </button>
+          <button onClick={()=>navigate(`/Productdetailpage/${card.id}`)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> View Details </button>
+          <button onClick={() => addToCart(card)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> Add to Cart </button>
          </div>
            </div>
              )
