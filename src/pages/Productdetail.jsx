@@ -19,9 +19,9 @@ function Productdetailspage() {
         return <div>Loading....!</div>
     }
     return(
-        <div>
+        <div className="bg-gray-100">
             <Navbarpage/>
-            <div className=" m-20 border  flex justify-center item-center gap-20 ">
+            <div className=" m-20   flex justify-center item-center gap-20 ">
                 <div className="flex items-center justify-center bg-gray-100 rounded-xl p-6">
                     <img src={product.image} alt={product.title} />
                 </div>

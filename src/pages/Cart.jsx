@@ -71,7 +71,7 @@ useEffect(() => {
   })
 
  return (
-    <div>
+    <div className="bg-gray-100">
         <Navbarpage/>
         <div className="p-6">
          <h1 className="text-2xl font-bold mb-6">My Cart</h1>
