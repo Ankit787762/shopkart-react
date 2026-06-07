@@ -1,11 +1,11 @@
-import Aboutpage from "./pages/About";
+import Aboutpage from "./pages/Aboutpage";
 import Cartpage from "./pages/Cart";
 import HomePage from "./pages/Home"; 
 import { Route,Routes } from "react-router-dom";
 import Productpage from "./pages/Product";
 import Productdetailspage from "./pages/Productdetail";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App(){
  return(
