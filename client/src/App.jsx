@@ -7,6 +7,8 @@ import Productdetailspage from "./pages/user/Productdetail";
 import Login from "./pages/user/Login";
 import Signup from "./pages/user/Signup";
 import Adminhome from "./pages/admin/Home";
+import Addproduct from "./pages/admin/Addproduct";
+import Manageproducts from "./pages/admin/Manageproduct";
 
 
 function App(){
@@ -23,6 +25,8 @@ function App(){
 
      
     <Route path="/admin" element={<Adminhome/>} />
+    <Route path="/admin/Addproduct" element={<Addproduct/>} />
+     <Route path="/admin/Manageproduct" element={<Manageproducts/>} />
     </Routes>
   </div>
  )

@@ -1,6 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import Navbarpage from "../../components/navbar";
 
 function Adminhome() {
+
+    const navigate =useNavigate();
+
     return (
        <div className="min-h-screen bg-gray-100">
             <Navbarpage />
@@ -25,8 +29,8 @@ function Adminhome() {
                     <p className="text-3xl font-bold text-blue-600">0</p>
 
                     <div className="flex gap-4 mt-4">
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Add Product</button>
-                        <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition">  Manage Products</button>
+                        <button onClick={()=>navigate('/admin/Addproduct')} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Add Product</button>
+                        <button onClick={()=>navigate('/admin/Manageproduct')} className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition">  Manage Products</button>
                     </div>
                 </div>
 
