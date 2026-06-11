@@ -1,15 +1,14 @@
-const products = require("../data/product");
+const Product = require("../data/product");
 
 // GET all products
-const getProduct = (req, res) => {
+const getProduct = async (req, res) => {
+    const products = await Product.find();
     res.json(products);
 };
 
 // GET single product
-const getsingleProduct = (req, res) => {
-    const product_id = Number(req.params.id);
-
-    const product = products.find(p => p.id === product_id);
+const getsingleProduct = async (req, res) => {
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
         return res.status(404).json({
@@ -21,35 +20,32 @@ const getsingleProduct = (req, res) => {
 };
 
 // ADD product
-const addProduct = (req, res) => {
-    const { title, price } = req.body;
+const addProduct = async (req, res) => {
+    const { image, name, title, price } = req.body;
 
-    if (!title || !price) {
+    if (!image || !name || !title || !price) {
         return res.status(400).json({
-            message: "title and price are required"
+            message: "all fields are required"
         });
     }
 
-    const newproduct = {
-        id: products.length + 1,
+    const newProduct = await Product.create({
+        image,
+        name,
         title,
         price
-    };
-
-    products.push(newproduct);
+    });
 
     res.status(201).json({
         success: true,
         message: "product added successfully",
-        product: newproduct
+        product: newProduct
     });
 };
 
 // UPDATE product
-const updateProduct = (req, res) => {
-    const product_id = Number(req.params.id);
-
-    const product = products.find(p => p.id === product_id);
+const updateProduct = async (req, res) => {
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
         return res.status(404).json({
@@ -57,23 +53,22 @@ const updateProduct = (req, res) => {
         });
     }
 
-    const { title, price } = req.body;
-
-    product.title = title;
-    product.price = price;
+    const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+    );
 
     res.json({
         success: true,
         message: "product updated successfully",
-        product
+        product: updatedProduct
     });
 };
 
 // DELETE product
-const deleteProduct = (req, res) => {
-    const product_id = Number(req.params.id);
-
-    const product = products.find(p => p.id === product_id);
+const deleteProduct = async (req, res) => {
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
         return res.status(404).json({
@@ -81,9 +76,7 @@ const deleteProduct = (req, res) => {
         });
     }
 
-    const index = products.findIndex(p => p.id === product_id);
-
-    products.splice(index, 1);
+    await Product.findByIdAndDelete(req.params.id);
 
     res.json({
         success: true,

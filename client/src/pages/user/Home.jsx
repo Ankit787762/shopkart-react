@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import Navbarpage from "../components/navbar";
-import Category from "../components/category";
-import Featured from "../components/FeaturedProduct";
-import About from "../components/About";
-import Footer from "../components/Footer";
+import Navbarpage from "../../components/navbar";
+import Category from "../../components/category";
+import Featured from "../../components/FeaturedProduct";
+import About from "../../components/About";
+import Footer from "../../components/Footer";
 
 function HomePage() {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
-import Navbarpage from "../components/navbar";
-import Footer from "../components/Footer";
+import Navbarpage from "../../components/navbar";
+import Footer from "../../components/Footer";
 
 function AboutPage() {
   return (

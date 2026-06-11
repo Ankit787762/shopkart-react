@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import Navbarpage from "../components/navbar";
+import Navbarpage from "../../components/navbar";
 import { useEffect, useState } from "react";
 
 function Productdetailspage() {
