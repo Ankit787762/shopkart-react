@@ -1,81 +1,100 @@
-const products =require("../data/product");
+const products = require("../data/product");
 
-const getProduct=()=>{
+// GET all products
+const getProduct = (req, res) => {
     res.json(products);
-}
-const getsingleProduct=()=>{
-     const product_id = Number(req.params.id);
-    const product = products.find(p=>p.id==product_id);
-    if(!product){
+};
+
+// GET single product
+const getsingleProduct = (req, res) => {
+    const product_id = Number(req.params.id);
+
+    const product = products.find(p => p.id === product_id);
+
+    if (!product) {
         return res.status(404).json({
             message: "product is not found"
-        })
+        });
     }
+
     res.json(product);
-}
+};
 
-const addProduct =()=>{
-    // Destructure data from the request body
-    const {title,price}=req.body;
+// ADD product
+const addProduct = (req, res) => {
+    const { title, price } = req.body;
 
-    // add validation
-    if(!title||!price){
+    if (!title || !price) {
         return res.status(400).json({
-            message:"title and price are required"
-        })
+            message: "title and price are required"
+        });
     }
-    // create new product
-    const newprodut={
-        id: products.length+1,
+
+    const newproduct = {
+        id: products.length + 1,
         title,
-        price, 
-        }
-        //push in products array
-        products.push(newprodut);
+        price
+    };
 
-        res.status(201).json({
-            success:true,
-            message:"product added successfully",
-            product:newprodut
-        })
-}
+    products.push(newproduct);
 
-const updateProduct=()=>{
-    const product_id = Number(req.params.id);
-    const product = products.find(p=>p.id===product_id);
-    if(!product){
-        return res.status(404).json({
-            message:"product is not found"
-        })
-      }
-        const {title,price}=req.body;
-        product.title=title,
-        product.price=price
-
-        res.json(product);
-}
-
-const deleteProduct=()=>{
-    const product_id = Number(req.params.id);
-    const product = products.find(p=>p.id===product_id);
-    if(!product){
-        return res.status(404).json({
-            message:"product is not found"
-        })
-      }
-      //remove product
-    const index = products.findIndex(p=>p.id ===product_id);
-    products.splice(index,1);
-
-     res.json({
-        success:true,
-        message:"product deleted successfully"
+    res.status(201).json({
+        success: true,
+        message: "product added successfully",
+        product: newproduct
     });
-}
-module.exports={
+};
+
+// UPDATE product
+const updateProduct = (req, res) => {
+    const product_id = Number(req.params.id);
+
+    const product = products.find(p => p.id === product_id);
+
+    if (!product) {
+        return res.status(404).json({
+            message: "product is not found"
+        });
+    }
+
+    const { title, price } = req.body;
+
+    product.title = title;
+    product.price = price;
+
+    res.json({
+        success: true,
+        message: "product updated successfully",
+        product
+    });
+};
+
+// DELETE product
+const deleteProduct = (req, res) => {
+    const product_id = Number(req.params.id);
+
+    const product = products.find(p => p.id === product_id);
+
+    if (!product) {
+        return res.status(404).json({
+            message: "product is not found"
+        });
+    }
+
+    const index = products.findIndex(p => p.id === product_id);
+
+    products.splice(index, 1);
+
+    res.json({
+        success: true,
+        message: "product deleted successfully"
+    });
+};
+
+module.exports = {
     getProduct,
     getsingleProduct,
     addProduct,
     updateProduct,
     deleteProduct
-}
+};

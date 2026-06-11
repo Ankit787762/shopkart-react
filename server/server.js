@@ -2,13 +2,15 @@ require("dotenv").config();
 
 const connectDB = require('./config/db');
 const express = require("express");
-const productroutes = require('./routes/productRoutes')
+const productRoutes = require('./routes/productRoutes')
 const userRoutes = require('./routes/userRoutes');
+const cartRoutes =require('./routes/cartRoutes');
 const app =express();
 app.use(express.json());
 
-app.use('/api/products',productroutes)
+app.use('/api/products',productRoutes)
 app.use('/api/users',userRoutes)
+app.use('/api/carts',cartRoutes)
 // connect database
 connectDB();
 

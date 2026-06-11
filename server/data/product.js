@@ -1,19 +1,23 @@
-const products=[
-     {
-            id:1,
-            title:"iphone",
-            price:70000,
-        },
-        {
-             id:2,
-            title:"Laptop",
-            price:80000,
-        },
-        {
-             id:3,
-            title:"LED-Tv",
-            price:70000,
-        }
-];
+const mongoose = require('mongoose');
 
-module.exports=products;
+const userSchema = mongoose.Schema({
+    image:{
+        type:String,
+        required:true
+    },
+    name:{
+        type:String,
+        required:true
+    },
+    title:{
+        type:String,
+        required:true
+    },
+    price:{
+        type:Number,
+        required:true
+    },
+})
+
+const Products = mongoose.model("Productmodel",userSchema);
+module.exports=Products;
