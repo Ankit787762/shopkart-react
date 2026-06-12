@@ -78,6 +78,8 @@ let totalitem = 0;
 let totalprice = 0;
 
 card.forEach((item) => {
+  if (!item.product) return;
+
   totalitem += item.quantity;
   totalprice += item.product.price * item.quantity;
 });
@@ -90,6 +92,7 @@ card.forEach((item) => {
 
         {card.length===0? <h1>no card in cart</h1>:
         card.map((item,index)=>{
+          if (!item.product) return null;
         return(
         <div key={index} className="border rounded-xl p-4 flex items-center gap-6 shadow-sm">
     

@@ -1,10 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import Navbarpage from "../../components/navbar";
+import { useEffect } from "react";
+import { useState } from "react";
+import Api from "../../services/Api";
 
 function Adminhome() {
 
     const navigate =useNavigate();
-
+    const [count,setCount] =useState();
+    useEffect(()=>{
+        async function getProductcount(){
+            try {
+                const res = await Api.get('/carts/getproductcount');
+                setCount(res.data.totalProducts);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getProductcount();
+    },[]);
+    
     return (
        <div className="min-h-screen bg-gray-100">
             <Navbarpage />
@@ -26,7 +41,7 @@ function Adminhome() {
                 <div className="bg-white p-6 rounded-xl shadow-md flex flex-col gap-4">
 
                     <h2 className="text-lg font-semibold text-gray-700">Total Products </h2>
-                    <p className="text-3xl font-bold text-blue-600">0</p>
+                    <p className="text-3xl font-bold text-blue-600">{count}</p>
 
                     <div className="flex gap-4 mt-4">
                         <button onClick={()=>navigate('/admin/Addproduct')} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Add Product</button>

@@ -12,38 +12,42 @@ if (token) {
 
     const navigate=useNavigate();
 
-
     const [email,setEmail] =useState("");
     const [password,setPassword] =useState("");
  
    
-    const handlechange=async()=>{
-
-      if(email===""||password==""){
-        alert("enter input fields");
+  const handlechange = async () => {
+    if (email === "" || password === "") {
+       alert("enter input fields");
         return;
-      }
+         }
       try {
-        const res = await Api.post('/users/login',{
-          email,
-          password
-        });
-        //save jwt token
-        console.log(res.data.token);
-        localStorage.setItem("token",res.data.token); 
-        localStorage.setItem("isLoggedIn", "true");
+       const res = await Api.post("/users/login", {
+         email,
+        password,
+       });
+  
+    const { token, user } = res.data;
 
-        alert("login successful");
-        navigate("/Productpage", { replace: true });
+    // save token + user
+    localStorage.setItem("token", token);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("user", JSON.stringify(user));
 
-      } catch (error) {
-         console.log(error.response?.data);
-         alert(
-         error.response?.data?.message ||
-         "Login Failed"
-         );
-      }
+    alert("login successful");
+
+    //  correct admin check
+    if (user.isAdmin) {
+      navigate("/admin", { replace: true });
+    } else {
+      navigate("/Productpage", { replace: true });
     }
+
+  } catch (error) {
+    console.log(error.response?.data);
+    alert(error.response?.data?.message || "Login Failed");
+  }
+};
 
 return (
   <div className="min-h-screen flex">

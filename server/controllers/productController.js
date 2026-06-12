@@ -21,13 +21,15 @@ const getsingleProduct = async (req, res) => {
 
 // ADD product
 const addProduct = async (req, res) => {
-    const { image, name, title, price } = req.body;
+    const { name, title, price } = req.body;
 
-    if (!image || !name || !title || !price) {
+    if (!req.file || !name || !title || !price) {
         return res.status(400).json({
             message: "all fields are required"
         });
     }
+
+    const image = `http://localhost:5000/uploads/${req.file.filename}`;
 
     const newProduct = await Product.create({
         image,
@@ -38,7 +40,6 @@ const addProduct = async (req, res) => {
 
     res.status(201).json({
         success: true,
-        message: "product added successfully",
         product: newProduct
     });
 };
@@ -84,10 +85,27 @@ const deleteProduct = async (req, res) => {
     });
 };
 
+    const getProductCount = async (req, res) => {
+    try {
+        const count = await Product.countDocuments();
+
+        res.status(200).json({
+            success: true,
+            totalProducts: count
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
 module.exports = {
     getProduct,
     getsingleProduct,
     addProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductCount
 };

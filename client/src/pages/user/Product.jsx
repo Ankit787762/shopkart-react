@@ -15,7 +15,9 @@ useEffect(() => {
   async function getProducts() {
     try {
       const response = await Api.get("/products");
-      setCards(response.data);
+      console.log("API RESPONSE:", response.data);
+
+      setCards(response.data); 
     } catch (error) {
       console.log(error);
     }
@@ -44,25 +46,62 @@ return(
         <Navbarpage/>
         <div className=" flex flex-col gap-5">
         <div className="mt-5 flex justify-center items-center">
-        <input onChange={(e)=>setSearchdata(e.target.value)} className="w-100 px-4 py-2 border border-gray-300 rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500" type="text" placeholder="Search products..."/></div>
+        <input onChange={(e)=>setSearchdata(e.target.value)} className="w-100 px-4 py-2 border border-gray-700 rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500" type="text" placeholder="Search products..."/></div>
         
-         <div className=" flex flex-wrap justify-center items-center gap-10 mt-20">
-
-        {cards.map((card)=>{
-         return(
-         <div key={card._id} className="w-72 h-96 border rounded-xl p-4 flex flex-col items-center shadow-lg">
-            <img className="w-40 h-40 object-contain" src={card.image} alt={card.title} />
-            <div className="text-sm font-bold mt-4 h-16 flex items-center justify-center text-center ">{card.title}</div>
-            <div className="text-m font-bold mt-4 text-center">Price: ${card.price}</div>
-           <div className="flex justify-around gap-5">
-          <button onClick={()=>navigate(`/Productdetailpage/${card._id}`)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> View Details </button>
-          <button onClick={() => addToCart(card)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> Add to Cart </button>
-         </div>
-           </div>
-             )
-            })}
-               
+       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
+      {cards.map((card) => {
+    return (
+      <div
+        key={card._id}
+        className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden flex flex-col"
+      >
+        {/* IMAGE SECTION */}
+        <div className="h-48 w-full bg-gray-50 flex items-center justify-center">
+          <img
+            src={
+              card.image.startsWith("http")
+                ? card.image
+                : `http://localhost:5000/uploads/${card.image}`
+            }
+            alt={card.title}
+            className="h-full object-contain hover:scale-105 transition duration-300"
+          />
         </div>
+
+        <div className="p-4 flex flex-col flex-1">
+           <h2 className="text-sm font-bold text-gray-800">
+             {card.name}
+           </h2>
+
+           <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+             {card.title}
+           </p>
+
+           <p className="text-blue-600 font-bold mt-3 text-lg">
+             ₹{card.price}
+            </p>
+
+           {/* button */}
+            <div className="flex gap-3 mt-auto pt-4">
+             <button
+                onClick={() => navigate(`/Productdetailpage/${card._id}`)}
+               className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-sm transition"
+             >
+              View
+              </button>
+
+             <button
+               onClick={() => addToCart(card)}
+               className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-sm transition"
+              >
+               Cart
+                </button>
+                 </div>
+              </div>
+            </div>
+        );
+     })}
+    </div>
 
         </div>
     </div>

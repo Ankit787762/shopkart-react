@@ -8,6 +8,8 @@ const cartRoutes =require('./routes/cartRoutes');
 
 const app =express();
 const cors =require('cors');
+const path = require("path");
+
 app.use(express.json());
 app.use(cors({
     origin:"http://localhost:5173",
@@ -15,7 +17,8 @@ app.use(cors({
 }))
 
 
-
+// STATIC FILES (IMPORTANT)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/api/products',productRoutes)
 app.use('/api/users',userRoutes)
 app.use('/api/carts',cartRoutes)

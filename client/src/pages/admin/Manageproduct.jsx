@@ -1,39 +1,92 @@
+import { useState } from "react";
 import Navbarpage from "../../components/navbar";
+import { useEffect } from "react";
+import Api from "../../services/Api";
+
 
 function Manageproducts() {
+    
+    const [cards,setcards] = useState([]);
+
+    useEffect(()=>{
+        async function getProducts(){
+            try {
+                const res = await Api.get('/products');
+                console.log("API RESPONSE:", res.data);
+                setcards(res.data);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getProducts();
+    },[]);
+
+   const deleteProduct = async (id) => {
+    try {
+     await Api.delete(`/products/${id}`);
+
+     // remove from UI instantly
+      setcards((prev) => prev.filter((item) => item._id !== id));
+
+     } catch (error) {
+     console.log(error);
+     }
+    };
+
     return (
+
         <div className="min-h-screen bg-gray-100">
 
-
             <Navbarpage />
-
             <div className="p-6">
 
-                <h1 className="text-2xl font-bold mb-6 text-gray-800">
-                    Manage Products
-                </h1>
+            <h1 className="text-2xl font-bold mb-6 text-gray-800">
+              Manage Products
+              </h1>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
+        {cards.map((card) => {
+            return (
+              <div
+             key={card._id}
+             className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-4 flex flex-col"  >
+            {/* IMAGE */}
+             <div className="w-full h-48 flex items-center justify-center bg-gray-100 rounded-xl overflow-hidden">
+              <img
+               src={
+                card.image.startsWith("http")
+                ? card.image
+                : `http://localhost:5000/uploads/${card.image}`
+               }
+              alt={card.title}
+               className="h-full object-contain hover:scale-105 transition duration-300"
+               />
+              </div>
 
-                    {/* Single Product Card */}
-                    <div className="bg-white shadow-md rounded-xl p-4 flex flex-col gap-3">
-                      
-                        <img src=" " alt="product image" className="h-40 w-full object-cover rounded-lg" />
-                        <h2 className="font-bold text-lg text-gray-800"> Product Name </h2>
-                        <p className="text-gray-600"> Product Title </p>
+           <h2 className="text-sm font-bold text-gray-900 mt-4"> {card.name} </h2>
+           <p className="text-xs text-gray-600 mt-1 line-clamp-2">{card.title}</p>
 
-                        <p className="text-blue-600 font-bold">  ₹999 </p>
+          <p className="text-blue-600 font-bold mt-2"> ₹{card.price}</p>
 
-                        <div className="flex gap-3 mt-2">
-                            <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition">  Edit   </button>
-                            <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition">    Delete   </button>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
+           <div className="flex gap-3 mt-auto pt-4">
+            <button
+            onClick={() => deleteProduct(card._id)}
+            className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition" >
+            Delete
+           </button>
 
-        </div>
+          {/*
+          <button className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg">
+            Edit
+          </button>
+          */}
+           </div>
+         </div>
+         );
+        })}
+       </div>
+      </div>
+     </div>
     );
 }
 
