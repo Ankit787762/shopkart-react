@@ -1,51 +1,49 @@
 import { useState } from "react";
 import { Link, useNavigate,Navigate } from "react-router-dom";
-
+import Api from "../../services/Api"
 
 function Login(){
 
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
+const token = localStorage.getItem("token");
 
-  if (isLoggedIn === "true") {
+if (token) {
   return <Navigate to="/Productpage" replace />;
-  }
+}
 
     const navigate=useNavigate();
-
-    const user = {
-    email: "ankit@gmail.com",
-    password: "12345678"
-  }
 
 
     const [email,setEmail] =useState("");
     const [password,setPassword] =useState("");
  
-    const Emailcheck=(e)=>{
-      setEmail(e.target.value);
-    }
-     const Passwordcheck=(e)=>{
-      setPassword(e.target.value);
-    }
-    const handlechange=(e)=>{
-      
-      console.log("email:",email);
-      console.log("password:",password);
+   
+    const handlechange=async()=>{
 
-       if(email===""|| password===""){
-        alert("enter input fields!");
-        return ;
-       }
-       if(user.email===email&&user.password===password){
-        localStorage.setItem("isLoggedIn", "true");
-        alert("Login Successful");
-        navigate("/Productpage",{ replace: true } )
-       }
-       else{
-        alert("User not found!");
-       }
+      if(email===""||password==""){
+        alert("enter input fields");
+        return;
       }
+      try {
+        const res = await Api.post('/users/login',{
+          email,
+          password
+        });
+        //save jwt token
+        console.log(res.data.token);
+        localStorage.setItem("token",res.data.token); 
+        localStorage.setItem("isLoggedIn", "true");
 
+        alert("login successful");
+        navigate("/Productpage", { replace: true });
+
+      } catch (error) {
+         console.log(error.response?.data);
+         alert(
+         error.response?.data?.message ||
+         "Login Failed"
+         );
+      }
+    }
 
 return (
   <div className="min-h-screen flex">
@@ -76,12 +74,12 @@ return (
 
         <div className="w-full">
           <h2 className="text-gray-700 font-medium mb-1"> Email:</h2>
-          <input  onChange={Emailcheck} type="email" placeholder="Enter your Email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          <input  onChange={(e)=>setEmail(e.target.value)} type="email"  value={email} placeholder="Enter your Email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"/>
         </div>
 
         <div className="w-full">
           <h2 className="text-gray-700 font-medium mb-1">Password:</h2>
-          <input  onChange={Passwordcheck} type="password" placeholder="Enter your Password"
+          <input  onChange={(e)=>setPassword(e.target.value)} value={password} type="password" placeholder="Enter your Password"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
            />
         </div>

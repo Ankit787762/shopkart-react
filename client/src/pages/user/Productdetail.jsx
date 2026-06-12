@@ -1,19 +1,23 @@
 import { useParams } from "react-router-dom";
 import Navbarpage from "../../components/navbar";
 import { useEffect, useState } from "react";
+import Api from "../../services/Api";
 
 function Productdetailspage() {
 
     const {id} =useParams();
     const [product,setProduct] =useState("");
     useEffect(()=>{
-        async function getcarddetail(params) {
-            const response = await fetch(`https://fakestoreapi.com/products/${id}`)
-            const data=await  response.json();
-            setProduct(data);
+        async function getProducts(){
+        try {
+            const res = await Api.get(`/carts/getproduct/${id}`);
+            setProduct(res.data);
+        } catch (error) {
+            console.log(error);
         }
-        getcarddetail();
-    },[id]);
+        }
+        getProducts();
+    },[]);
 
     if(!product){
         return <div>Loading....!</div>
@@ -28,7 +32,7 @@ function Productdetailspage() {
                <div className=" w-200 flex flex-col justify-center">
                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">{product.title}</h1>
                <p className="text-2xl font-bold text-green-600 mb-4">${product.price}</p>
-               <p className="text-gray-600 leading-relaxed mb-6">{product.description}</p>
+               {/* <p className="text-gray-600 leading-relaxed mb-6">{item.product.description}</p> */}
 
            </div>
             </div>

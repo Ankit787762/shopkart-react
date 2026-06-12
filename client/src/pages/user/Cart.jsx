@@ -1,74 +1,86 @@
 import { useParams } from "react-router-dom";
 import Navbarpage from "../../components/navbar";
 import { useEffect, useState } from "react";
-
+import Api from "../../services/Api";
 
 
 function Cartpage(){
 
-
 const [card,setCard] =useState([]);
-const [count,setCount] = useState([]);
 
 
-useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("cart")) || [];
-    setCard(saved);
-
-    const savecount = JSON.parse(localStorage.getItem("count"))
-   if (savecount) {
-    const newCount = [...savecount];
-
-       while (newCount.length < saved.length) {
-          newCount.push(1);
+    useEffect(()=>{
+    async function getcard(){
+      try {
+        const res = await Api.get('/carts/getcart');
+        setCard(res.data.cart.items);
+        
+      } catch (error) {
+        console.log(error);
       }
+    }
+    getcard();
+  },[]);
 
-       setCount(newCount);
-      } else {
-      setCount(saved.map(() => 1));
+const removeItem = async(item) => {
+  try {
+
+    await Api.delete("/carts/removecart", {
+      data: {
+        productid: item.product._id
       }
-  }, []);
+    });
 
-    const removeItem = (index) => {
-    //update cards
-    const updated = card.filter((_, i) => i !== index);
-    setCard(updated);
-    localStorage.setItem("cart", JSON.stringify(updated));
+    const res = await Api.get("/carts/getcart");
+    setCard(res.data.cart.items);
 
-    //update count
-    const updatecount = count.filter((_,i)=>i!==index );
-    setCount(updatecount);
-     localStorage.setItem("count", JSON.stringify(updatecount));
-  };
-
-     useEffect(()=>{
-        if(count.length > 0){
-        localStorage.setItem("count",JSON.stringify(count));
-        }
-  },[count])
-
-    function decrease(index){
-        const updatecount = [...count];
-        if(updatecount[index]>1){
-        updatecount[index]--;
-        setCount(updatecount);
-        }
+  } catch (error) {
+    console.log(error);
   }
+};
 
-  function increase(index){
-        const updatecount = [...count];
 
-        updatecount[index]++;
-        setCount(updatecount);
+const increase = async(item)=>{
+  try {
+    await Api.put("/carts/updatecart",{
+      productid:item.product._id,
+      quantity:item.quantity + 1
+    });
+
+    const res = await Api.get("/carts/getcart");
+    setCard(res.data.cart.items);
+
+  } catch(error){
+    console.log(error);
   }
+}
+const decrease = async(item)=>{
+  try {
 
-  let totalitem =0;
-  let totalprice =0;
+    if(item.quantity <= 1){
+      return;
+    }
 
-  card.forEach((item,index)=>{
-    totalitem = totalitem+count[index]||1;
-    totalprice =totalprice+item.price*(count[index]||1);
-  })
+    await Api.put("/carts/updatecart",{
+      productid:item.product._id,
+      quantity:item.quantity - 1
+    });
+
+    const res = await Api.get("/carts/getcart");
+    setCard(res.data.cart.items);
+
+  } catch(error){
+    console.log(error);
+  }
+}
+
+let totalitem = 0;
+let totalprice = 0;
+
+card.forEach((item) => {
+  totalitem += item.quantity;
+  totalprice += item.product.price * item.quantity;
+});
 
  return (
     <div className="bg-gray-100">
@@ -82,23 +94,23 @@ useEffect(() => {
         <div key={index} className="border rounded-xl p-4 flex items-center gap-6 shadow-sm">
     
         <div className="w-32 h-32 shrink-0">
-        <img src={item.image} alt="product image"className="w-full h-full object-contain"/>
+        <img src={item.product.image} alt="product image"className="w-full h-full object-contain"/>
        </div>
 
       {/* Product Details */}
       <div className="flex-1">
-      <h2 className="text-lg font-semibold text-gray-800"> {item.title}</h2>
+      <h2 className="text-lg font-semibold text-gray-800"> {item.product.title}</h2>
 
-      <p className="text-green-600 font-bold mt-1">${item.price}</p>
+      <p className="text-green-600 font-bold mt-1">${item.product.price}</p>
 
       <div className="flex items-center gap-3 mt-3">
-        <button onClick={()=>decrease(index)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
-        <span className="text-sm font-medium">{count[index]}</span>
-        <button onClick={()=>increase(index)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
+        <button onClick={()=>decrease(item)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
+        <span className="text-sm font-medium">{item.quantity}</span>
+        <button onClick={() => increase(item)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
         </div>
        </div>
 
-       <button onClick={()=>removeItem(index)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">Delete</button></div>
+       <button onClick={()=>removeItem(item)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">Delete</button></div>
             )
         })}
   

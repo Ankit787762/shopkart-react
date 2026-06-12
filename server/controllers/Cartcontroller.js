@@ -1,9 +1,11 @@
 const Cart =require('../data/cart');
-
+const Product =require('../data/product');
 const addtocart=async(req,res)=>{
  try {
     
 const {productid,quantity} =req.body;
+
+
 const userid = req.user.id
 let cart = await Cart.findOne({user:userid});
 
@@ -50,7 +52,7 @@ const getcart = async (req, res) => {
     try {
         const userid = req.user.id;
 
-        const cart = await Cart.findOne({ user: userid });
+       const cart = await Cart.findOne({ user: userid }).populate("items.product");
 
         if (!cart) {
             return res.status(404).json({
@@ -148,9 +150,28 @@ const removecart = async (req, res) => {
     }
 };
 
+const getProductById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json(
+                { message: "Product not found" }
+            );
+        }
+
+        res.status(200).json(product);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 module.exports= {
     addtocart,
     getcart,
     updatecart,
-    removecart
+    removecart,
+    getProductById
 }

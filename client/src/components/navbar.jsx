@@ -3,11 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 function Navbarpage(){
 
     const navigate = useNavigate("")
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const token = localStorage.getItem("token");
 
     const handlechange=()=>{
-        localStorage.removeItem("isLoggedIn");
-        navigate("/");
+        localStorage.removeItem("token");
+        navigate("/Loginpage", { replace: true });  //ProductPage history se replace ho jata hai.
     }
 
     return (
@@ -15,7 +15,7 @@ function Navbarpage(){
            <h1 className="text-2xl font-bold">ShopKart</h1>
            <div className="flex justify-center items-center gap-20 mr-20">
             
-            {isLoggedIn?
+            {token?
             (<button onClick={handlechange} >Logout</button>):
             (<> <Link to="/" >Home</Link>
             <Link to="/Loginpage" >Login</Link>

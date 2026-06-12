@@ -2,27 +2,40 @@ import { useNavigate } from "react-router-dom";
 import Navbarpage from "../../components/navbar";
 import { useEffect, useState } from "react";
 
+import Api from '../../services/Api';
 
 function Productpage() {
+
 
 const navigate =useNavigate();
 const [cards,setCards]=useState([]);
 const [searchdata,setSearchdata]=useState("");
 
-useEffect(()=>{
-    async function getcard() {
-    const response = await fetch('https://fakestoreapi.com/products/category/electronics') 
-    const data  = await response.json();
-    setCards(data);
+useEffect(() => {
+  async function getProducts() {
+    try {
+      const response = await Api.get("/products");
+      setCards(response.data);
+    } catch (error) {
+      console.log(error);
     }
-    getcard();
-},[]);
+  }
 
-const addToCart = (product) => {
-  const oldCart = JSON.parse(localStorage.getItem("cart")) || [];
+  getProducts();
+}, []);
 
-  localStorage.setItem("cart", JSON.stringify([...oldCart, product]));
-  navigate("/Cartpage"); 
+
+const addToCart = async (product) => {
+  try {
+    await Api.post("/carts/addtocart", {
+      productid: product._id,
+      quantity: 1,
+    });
+
+    navigate("/Cartpage");
+  } catch (error) {
+    console.log(error);
+  }
 };
  
 
@@ -37,12 +50,12 @@ return(
 
         {cards.map((card)=>{
          return(
-         <div key={card.id} className="w-72 h-96 border rounded-xl p-4 flex flex-col items-center shadow-lg">
+         <div key={card._id} className="w-72 h-96 border rounded-xl p-4 flex flex-col items-center shadow-lg">
             <img className="w-40 h-40 object-contain" src={card.image} alt={card.title} />
             <div className="text-sm font-bold mt-4 h-16 flex items-center justify-center text-center ">{card.title}</div>
             <div className="text-m font-bold mt-4 text-center">Price: ${card.price}</div>
            <div className="flex justify-around gap-5">
-          <button onClick={()=>navigate(`/Productdetailpage/${card.id}`)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> View Details </button>
+          <button onClick={()=>navigate(`/Productdetailpage/${card._id}`)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> View Details </button>
           <button onClick={() => addToCart(card)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"> Add to Cart </button>
          </div>
            </div>
