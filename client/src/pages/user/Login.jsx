@@ -27,12 +27,7 @@ if (token) {
         password,
        });
   
-    const { token, user } = res.data;
-
-    // save token + user
-    localStorage.setItem("token", token);
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("user", JSON.stringify(user));
+    const { user } = res.data;
 
     alert("login successful");
 

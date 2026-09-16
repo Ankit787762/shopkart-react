@@ -1,10 +1,12 @@
 //import
-const loginUser =require('../controllers/Logincontroller');
+const {userLogout,userLogin,getMe} =require('../controllers/Logincontroller');
 const signupUser = require('../controllers/Signupcontroller');
+const authmiddleware = require("../middleware/authmiddleware");
 const express =require('express');
 const router =express.Router();
 
-router.post('/login',loginUser);
+router.post('/login',userLogin);
 router.post('/signup',signupUser);
-
+router.post("/logout", userLogout);
+router.get("/me", authmiddleware, getMe);
 module.exports=router;

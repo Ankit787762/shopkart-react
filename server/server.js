@@ -6,11 +6,15 @@ const productRoutes = require('./routes/productRoutes')
 const userRoutes = require('./routes/userRoutes');
 const cartRoutes =require('./routes/cartRoutes');
 
+const cookieParser = require("cookie-parser");
+
+
 const app =express();
 const cors =require('cors');
 const path = require("path");
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin:"https://shopkart-react-liard.vercel.app",
     credentials: true,
