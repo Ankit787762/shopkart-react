@@ -10,8 +10,10 @@ function Navbarpage() {
         const checkUser = async () => {
             try {
                 const res = await Api.get("/users/me");
+                console.log("logged user:", res.data.user);
                 setUser(res.data.user);
             } catch (error) {
+                console.log("not logged in");
                 setUser(null);
             }
         };
