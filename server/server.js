@@ -19,9 +19,9 @@ app.use(cors({
 
 // STATIC FILES (IMPORTANT)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use('/api/products',productRoutes)
-app.use('/api/users',userRoutes)
-app.use('/api/carts',cartRoutes)
+app.use('/products',productRoutes)
+app.use('/users',userRoutes)
+app.use('/carts',cartRoutes)
 // connect database
 connectDB();
 
