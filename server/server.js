@@ -12,7 +12,7 @@ const path = require("path");
 
 app.use(express.json());
 app.use(cors({
-    origin:"https://shopkart-react-liard.vercel.app/",
+    origin:"https://shopkart-react-liard.vercel.app",
     credentials: true,
 }))
 
