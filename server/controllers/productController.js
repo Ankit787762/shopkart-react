@@ -29,7 +29,7 @@ const addProduct = async (req, res) => {
         });
     }
 
-    const image = `http://localhost:5000/uploads/${req.file.filename}`;
+   const image = `https://shopkart-react.onrender.com/uploads/${req.file.filename}`;
 
     const newProduct = await Product.create({
         image,
