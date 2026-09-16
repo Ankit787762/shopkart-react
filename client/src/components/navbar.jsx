@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import Api from "../../services/Api";
+import Api from "../services/Api";
 
 function Navbarpage() {
     const navigate = useNavigate();
