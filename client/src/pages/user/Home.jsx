@@ -10,7 +10,6 @@ function HomePage() {
 
   return (
     <div>
-      <Navbarpage />
 
       {/* Hero Section */}
       <div
