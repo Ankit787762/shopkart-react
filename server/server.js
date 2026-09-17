@@ -16,8 +16,8 @@ const path = require("path");
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    // origin:"https://shopkart-react-liard.vercel.app",
-     origin:"http://localhost:5173",
+    origin:"https://shopkart-react-liard.vercel.app",
+    //  origin:"http://localhost:5173",
     credentials: true,
 }))
 
