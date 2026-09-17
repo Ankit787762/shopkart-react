@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Api from "../../services/Api";
+import { useAuth } from "../../context/authContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +18,7 @@ function Login() {
     }
 
     setLoading(true);
+
     try {
       const res = await Api.post("/users/login", {
         email,
@@ -24,6 +27,9 @@ function Login() {
 
       const { user } = res.data;
 
+      // Update global auth state immediately
+      login(user);
+
       alert("login successful");
 
       if (user.isAdmin) {
@@ -31,9 +37,11 @@ function Login() {
       } else {
         navigate("/Productpage", { replace: true });
       }
+
     } catch (error) {
       console.log(error.response?.data);
       alert(error.response?.data?.message || "Login Failed");
+
     } finally {
       setLoading(false);
     }
