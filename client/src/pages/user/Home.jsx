@@ -4,17 +4,31 @@ import Category from "../../components/category";
 import Featured from "../../components/FeaturedProduct";
 import About from "../../components/About";
 import Footer from "../../components/Footer";
+import Api from "../../services/Api";
 
 function HomePage() {
   const navigate = useNavigate();
+
+  const handleShopNow = async () => {
+    try {
+      const res = await Api.get("/users/me");
+
+      if (res.data.user.isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate("/Productpage");
+      }
+    } catch (error) {
+      navigate("/Loginpage");
+    }
+  };
 
   return (
     <div>
       <Navbarpage />
 
-      {/* Hero Section */}
       <div
-        className="min-h-screen  bg-cover bg-center relative"
+        className="min-h-screen bg-cover bg-center relative"
         style={{ backgroundImage: "url('/images/bg.webp')" }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
@@ -32,19 +46,20 @@ function HomePage() {
             </p>
 
             <button
-              onClick={() => navigate("/Loginpage")}
+              onClick={handleShopNow}
               className="mt-8 bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-xl font-semibold"
             >
               Shop Now
-               </button>
-              </div>
-             </div>
+            </button>
           </div>
-            <Category/>
-            <Featured/>
-            <About/>
-            <Footer/>
         </div>
+      </div>
+
+      <Category />
+      <Featured />
+      <About />
+      <Footer />
+    </div>
   );
 }
 

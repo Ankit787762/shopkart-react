@@ -32,10 +32,10 @@ function Navbarpage() {
     };
 
     return (
-        <div className="p-5 w-full h-15 bg-blue-400 text-white flex justify-between items-center">
+        <div className="px-4 py-4 sm:px-6 w-full bg-blue-400 text-white flex justify-between items-center">
             <h1 className="text-2xl font-bold">ShopKart</h1>
 
-            <div className="flex justify-center items-center gap-20 mr-20">
+          <div className="flex items-center gap-4 sm:gap-8">
                 {user ? (
                     <button onClick={handlechange}>
                         Logout
