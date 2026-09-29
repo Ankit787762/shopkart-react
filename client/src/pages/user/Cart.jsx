@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Api from "../../services/Api";
 
 function Cartpage() {
-
   const [card, setCard] = useState([]);
 
   useEffect(() => {
@@ -19,107 +18,124 @@ function Cartpage() {
     getcard();
   }, []);
 
-
   const removeItem = async (item) => {
     try {
-
       await Api.delete("/carts/removecart", {
         data: {
-          productid: item.product._id
-        }
+          productid: item.product._id,
+        },
       });
 
       const res = await Api.get("/carts/getcart");
       setCard(res.data.cart.items);
-
     } catch (error) {
       console.log(error);
     }
   };
-
 
   const increase = async (item) => {
     try {
-
       await Api.put("/carts/updatecart", {
         productid: item.product._id,
-        quantity: item.quantity + 1
+        quantity: item.quantity + 1,
       });
 
       const res = await Api.get("/carts/getcart");
       setCard(res.data.cart.items);
-
     } catch (error) {
       console.log(error);
     }
   };
 
-
   const decrease = async (item) => {
     try {
-
       if (item.quantity <= 1) {
         return;
       }
 
       await Api.put("/carts/updatecart", {
         productid: item.product._id,
-        quantity: item.quantity - 1
+        quantity: item.quantity - 1,
       });
 
       const res = await Api.get("/carts/getcart");
       setCard(res.data.cart.items);
-
     } catch (error) {
       console.log(error);
     }
   };
-
 
   // Calculate total
   let totalitem = 0;
   let totalprice = 0;
 
   card.forEach((item) => {
-
     if (!item.product) return;
 
     totalitem += item.quantity;
     totalprice += item.product.price * item.quantity;
-
   });
 
+  const handlePayment = async () => {
+    try {
+      const res = await Api.post("/payment/create-order", {
+        amount: totalprice,
+      });
+
+      const order = res.data.order;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+        amount: order.amount,
+
+        currency: order.currency,
+
+        name: "ShopKart",
+
+        description: "ShopKart Order",
+
+        order_id: order.id,
+
+        handler: function (response) {
+          console.log("Payment successful");
+          console.log(response);
+        },
+
+        theme: {
+          color: "#3b82f6",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.open();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
-
       <Navbarpage />
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-
         {/* Page Heading */}
         <div className="mb-8">
-
-          <h1 className="text-3xl font-bold text-gray-800">
-            My Cart
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-800">My Cart</h1>
 
           <p className="text-gray-500 mt-1">
             {totalitem} {totalitem === 1 ? "item" : "items"} in your cart
           </p>
-
         </div>
-
 
         {/* Empty Cart */}
         {card.length === 0 ? (
-
-          <div className="bg-white rounded-2xl border border-gray-200
-                          shadow-sm p-12 text-center">
-
-            <div className="text-6xl mb-5">
-              🛒
-            </div>
+          <div
+            className="bg-white rounded-2xl border border-gray-200
+                          shadow-sm p-12 text-center"
+          >
+            <div className="text-6xl mb-5">🛒</div>
 
             <h2 className="text-2xl font-bold text-gray-800">
               Your cart is empty
@@ -128,50 +144,37 @@ function Cartpage() {
             <p className="text-gray-500 mt-2">
               Looks like you haven't added anything to your cart yet.
             </p>
-
           </div>
-
         ) : (
-
           /* Cart + Summary */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-
             {/* LEFT - Cart Items */}
             <div className="lg:col-span-2 space-y-5">
-
               {card.map((item, index) => {
-
                 if (!item.product) return null;
 
                 return (
-
                   <div
                     key={index}
                     className="bg-white rounded-2xl border border-gray-200
                                shadow-sm p-5 flex flex-col sm:flex-row
                                gap-6"
                   >
-
                     {/* Product Image */}
                     <div
                       className="w-full sm:w-36 h-36 shrink-0
                                  bg-gray-50 rounded-xl
                                  flex items-center justify-center"
                     >
-
                       <img
                         src={item.product.image}
                         alt={item.product.title}
                         className="w-full h-full object-contain p-3"
                       />
-
                     </div>
-
 
                     {/* Product Information */}
                     <div className="flex-1">
-
                       <h2
                         className="text-lg font-semibold text-gray-800
                                    leading-6"
@@ -179,25 +182,19 @@ function Cartpage() {
                         {item.product.title}
                       </h2>
 
-
                       {/* Price */}
                       <p className="text-xl font-bold text-green-600 mt-3">
                         ₹{item.product.price}
                       </p>
 
-
                       {/* Quantity */}
                       <div className="flex items-center gap-3 mt-5">
-
-                        <span className="text-sm text-gray-500">
-                          Quantity:
-                        </span>
+                        <span className="text-sm text-gray-500">Quantity:</span>
 
                         <div
                           className="flex items-center border
                                      border-gray-300 rounded-lg overflow-hidden"
                         >
-
                           <button
                             onClick={() => decrease(item)}
                             className="w-9 h-9 flex items-center justify-center
@@ -224,11 +221,8 @@ function Cartpage() {
                           >
                             +
                           </button>
-
                         </div>
-
                       </div>
-
 
                       {/* Delete */}
                       <button
@@ -239,96 +233,59 @@ function Cartpage() {
                       >
                         Remove item
                       </button>
-
                     </div>
-
 
                     {/* Item Total */}
                     <div
                       className="sm:text-right flex sm:block
                                  items-center justify-between"
                     >
-
-                      <p className="text-sm text-gray-500">
-                        Item Total
-                      </p>
+                      <p className="text-sm text-gray-500">Item Total</p>
 
                       <p className="text-lg font-bold text-gray-800 mt-1">
                         ₹{item.product.price * item.quantity}
                       </p>
-
                     </div>
-
                   </div>
-
                 );
-
               })}
-
             </div>
-
 
             {/* RIGHT - Order Summary */}
             <div>
-
               <div
                 className="bg-white rounded-2xl border border-gray-200
                            shadow-sm p-6 sticky top-6"
               >
-
                 <h2 className="text-xl font-bold text-gray-800 mb-6">
                   Order Summary
                 </h2>
 
-
                 {/* Items */}
                 <div className="flex justify-between text-gray-600 mb-4">
+                  <span>Total Items</span>
 
-                  <span>
-                    Total Items
-                  </span>
-
-                  <span className="font-medium text-gray-800">
-                    {totalitem}
-                  </span>
-
+                  <span className="font-medium text-gray-800">{totalitem}</span>
                 </div>
-
 
                 {/* Subtotal */}
                 <div className="flex justify-between text-gray-600 mb-4">
+                  <span>Subtotal</span>
 
-                  <span>
-                    Subtotal
-                  </span>
-
-                  <span>
-                    ₹{totalprice}
-                  </span>
-
+                  <span>₹{totalprice}</span>
                 </div>
-
 
                 {/* Delivery */}
                 <div className="flex justify-between text-gray-600 mb-4">
+                  <span>Delivery</span>
 
-                  <span>
-                    Delivery
-                  </span>
-
-                  <span className="text-green-600 font-medium">
-                    FREE
-                  </span>
-
+                  <span className="text-green-600 font-medium">FREE</span>
                 </div>
-
 
                 <div className="border-t border-gray-200 my-5"></div>
 
-
                 {/* Total */}
                 <div className="flex justify-between items-center">
-
                   <span className="text-lg font-semibold text-gray-800">
                     Total
                   </span>
@@ -336,12 +293,10 @@ function Cartpage() {
                   <span className="text-2xl font-bold text-green-600">
                     ₹{totalprice}
                   </span>
-
                 </div>
 
-
                 {/* Checkout */}
-                <button
+                <button  onClick={handlePayment}
                   className="w-full mt-6 bg-blue-500
                              hover:bg-blue-600 text-white
                              font-semibold py-3 rounded-lg
@@ -350,10 +305,8 @@ function Cartpage() {
                   Proceed to Checkout
                 </button>
 
-
                 {/* Security / Delivery Info */}
                 <div className="mt-5 pt-5 border-t border-gray-200">
-
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
                     <span>✓</span>
                     Secure checkout
@@ -368,19 +321,12 @@ function Cartpage() {
                     <span>✓</span>
                     Easy returns
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
-
         )}
-
       </div>
-
     </div>
   );
 }

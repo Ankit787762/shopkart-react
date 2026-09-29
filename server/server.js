@@ -7,7 +7,7 @@ const userRoutes = require('./routes/userRoutes');
 const cartRoutes =require('./routes/cartRoutes');
 
 const cookieParser = require("cookie-parser");
-
+const paymentRoute = require("./routes/paymentRoutes");
 
 const app =express();
 const cors =require('cors');
@@ -27,6 +27,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/products',productRoutes)
 app.use('/users',userRoutes)
 app.use('/carts',cartRoutes)
+app.use("/payment", paymentRoute);
 // connect database
 connectDB();
 
