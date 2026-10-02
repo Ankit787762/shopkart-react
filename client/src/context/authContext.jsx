@@ -20,7 +20,10 @@ export function AuthProvider({ children }) {
         checkUser();
     }, []);
 
-    const login = (userData) => {
+    const login = (userData, token) => {
+        if (token) {
+            localStorage.setItem("token", token);
+        }
         setUser(userData);
     };
 
@@ -30,6 +33,9 @@ export function AuthProvider({ children }) {
             setUser(null);
         } catch (error) {
             console.log(error);
+        } finally {
+            localStorage.removeItem("token");
+            setUser(null);
         }
     };
 

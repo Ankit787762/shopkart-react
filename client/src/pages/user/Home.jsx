@@ -10,6 +10,11 @@ function HomePage() {
   const navigate = useNavigate();
 
   const handleShopNow = async () => {
+    if (!localStorage.getItem("token")) {
+      navigate("/Loginpage");
+      return;
+    }
+
     try {
       const res = await Api.get("/users/me");
 

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Navbarpage from "../../components/navbar";
 import { useEffect, useState } from "react";
 
-import Api from '../../services/Api';
+import Api, { getProductImageUrl } from '../../services/Api';
 
 function Productpage() {
 
@@ -28,6 +28,11 @@ useEffect(() => {
 
 
 const addToCart = async (product) => {
+  if (!localStorage.getItem("token")) {
+    navigate("/Loginpage");
+    return;
+  }
+
   try {
     await Api.post("/carts/addtocart", {
       productid: product._id,
@@ -37,6 +42,7 @@ const addToCart = async (product) => {
     navigate("/Cartpage");
   } catch (error) {
     console.log(error);
+    alert(error.response?.data?.message || "Unable to add this product to your cart. Please try again.");
   }
 };
  
@@ -106,12 +112,10 @@ return (
                 <div className="h-52 bg-gray-50 flex items-center justify-center overflow-hidden">
 
                   <img
-                    src={
-                      card.image.startsWith("http")
-                        ? card.image
-                        : `http://localhost:5000/uploads/${card.image}`
-                    }
+                    src={getProductImageUrl(card.image)}
                     alt={card.name}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-contain p-5
                     hover:scale-110 transition-transform duration-300"
                   />

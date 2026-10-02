@@ -1,12 +1,14 @@
 import { useParams } from "react-router-dom";
 import Navbarpage from "../../components/navbar";
 import { useEffect, useState } from "react";
-import Api from "../../services/Api";
+import Api, { getProductImageUrl } from "../../services/Api";
 
 function Productdetailspage() {
 
     const { id } = useParams();
-    const [product, setProduct] = useState("");
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
 
@@ -16,6 +18,11 @@ function Productdetailspage() {
                 setProduct(res.data);
             } catch (error) {
                 console.log(error);
+                setErrorMessage(
+                    error.response?.data?.message || "Unable to load this product. Please try again."
+                );
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -24,8 +31,19 @@ function Productdetailspage() {
     }, [id]);
 
 
-    if (!product) {
+    if (loading) {
         return <div>Loading....!</div>;
+    }
+
+    if (errorMessage || !product) {
+        return (
+            <div className="min-h-screen bg-gray-100">
+                <Navbarpage />
+                <p role="alert" className="p-6 text-center text-red-600">
+                    {errorMessage || "Product not found."}
+                </p>
+            </div>
+        );
     }
 
 
@@ -46,8 +64,9 @@ function Productdetailspage() {
                                     flex items-center justify-center p-10">
 
                         <img
-                            src={product.image}
+                            src={getProductImageUrl(product.image)}
                             alt={product.title}
+                            decoding="async"
                             className="max-h-[400px] max-w-full object-contain
                                        hover:scale-105 transition duration-300"
                         />

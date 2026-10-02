@@ -4,6 +4,8 @@ import Api from "../../services/Api";
 
 function Cartpage() {
   const [card, setCard] = useState([]);
+  const [paymentError, setPaymentError] = useState("");
+  const [creatingOrder, setCreatingOrder] = useState(false);
 
   useEffect(() => {
     async function getcard() {
@@ -77,6 +79,25 @@ function Cartpage() {
   });
 
   const handlePayment = async () => {
+    setPaymentError("");
+
+    if (totalprice <= 0) {
+      setPaymentError("Your cart total must be greater than zero.");
+      return;
+    }
+
+    if (!window.Razorpay) {
+      setPaymentError("Razorpay checkout could not be loaded. Check your connection and try again.");
+      return;
+    }
+
+    const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
+    if (!key) {
+      setPaymentError("Razorpay is not configured in the client deployment.");
+      return;
+    }
+
+    setCreatingOrder(true);
     try {
       const res = await Api.post("/payment/create-order", {
         amount: totalprice,
@@ -85,7 +106,7 @@ function Cartpage() {
       const order = res.data.order;
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key,
 
         amount: order.amount,
 
@@ -108,10 +129,20 @@ function Cartpage() {
       };
 
       const razorpay = new window.Razorpay(options);
+      razorpay.on("payment.failed", (response) => {
+        setPaymentError(
+          response.error?.description || "Payment failed. Please try again."
+        );
+      });
 
       razorpay.open();
     } catch (error) {
       console.log(error);
+      setPaymentError(
+        error.response?.data?.message || "Unable to start checkout. Please try again."
+      );
+    } finally {
+      setCreatingOrder(false);
     }
   };
 
@@ -296,14 +327,20 @@ function Cartpage() {
                 </div>
 
                 {/* Checkout */}
-                <button  onClick={handlePayment}
+                <button onClick={handlePayment} disabled={creatingOrder}
                   className="w-full mt-6 bg-blue-500
-                             hover:bg-blue-600 text-white
+                             hover:bg-blue-600 disabled:opacity-60 text-white
                              font-semibold py-3 rounded-lg
                              transition duration-200"
                 >
-                  Proceed to Checkout
+                  {creatingOrder ? "Preparing checkout..." : "Proceed to Checkout"}
                 </button>
+
+                {paymentError && (
+                  <p role="alert" className="mt-3 text-sm text-red-600">
+                    {paymentError}
+                  </p>
+                )}
 
                 {/* Security / Delivery Info */}
                 <div className="mt-5 pt-5 border-t border-gray-200">

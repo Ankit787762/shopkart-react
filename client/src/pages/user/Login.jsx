@@ -25,10 +25,10 @@ function Login() {
         password,
       });
 
-      const { user } = res.data;
+      const { user, token } = res.data;
 
       // Update global auth state immediately
-      login(user);
+      login(user, token);
 
       alert("login successful");
 

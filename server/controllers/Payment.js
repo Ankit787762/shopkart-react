@@ -1,16 +1,32 @@
 const Razorpay = require("razorpay");
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-});
-
 const createOrder = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const amount = Number(req.body.amount);
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      return res.status(503).json({
+        success: false,
+        message: "Payment is not configured. Set the Razorpay keys on the server."
+      });
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid order amount is required."
+      });
+    }
+
+    const razorpay = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret
+    });
 
     const options = {
-      amount: amount * 100,
+      amount: Math.round(amount * 100),
       currency: "INR",
       receipt: "order_" + Date.now()
     };
@@ -23,11 +39,12 @@ const createOrder = async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error);
+    const gatewayMessage = error.error?.description;
+    console.error("Razorpay order creation failed:", gatewayMessage || error.message);
 
-    res.status(500).json({
+    res.status(502).json({
       success: false,
-      message: "Something went wrong"
+      message: gatewayMessage || "Razorpay could not create the order. Check the server Razorpay credentials."
     });
   }
 };

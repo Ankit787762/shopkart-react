@@ -10,9 +10,11 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignup = async () => {
     setLoading(true);
+    setErrorMessage("");
     try {
       const res = await Api.post("/users/signup", {
         firstName,
@@ -24,7 +26,12 @@ function Signup() {
       alert("resgistration successful");
       navigate("/Loginpage");
     } catch (error) {
-      console.log(error.response?.data);
+      const message = error.response?.data?.message;
+      setErrorMessage(
+        message === "user is already exist"
+          ? "This email is already registered. Please log in."
+          : message || "Unable to create your account. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -122,6 +129,12 @@ function Signup() {
           >
             {loading ? "Signing up..." : "Submit"}
           </button>
+
+          {errorMessage && (
+            <p role="alert" className="text-red-600 text-center">
+              {errorMessage}
+            </p>
+          )}
 
           <p className="text-gray-600 text-center">
             Already have an account?{" "}

@@ -5,6 +5,11 @@ function Featured() {
   const navigate = useNavigate();
 
   const handleBuyNow = async () => {
+    if (!localStorage.getItem("token")) {
+      navigate("/Loginpage");
+      return;
+    }
+
     try {
       const res = await Api.get("/users/me");
 
