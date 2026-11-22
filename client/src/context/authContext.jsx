@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
+    console.log("Current User:", user);
 
     useEffect(() => {
         const checkUser = async () => {

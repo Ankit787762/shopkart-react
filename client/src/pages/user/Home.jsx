@@ -9,24 +9,24 @@ import Api from "../../services/Api";
 function HomePage() {
   const navigate = useNavigate();
 
-  const handleShopNow = async () => {
-    if (!localStorage.getItem("token")) {
-      navigate("/Loginpage");
-      return;
-    }
-
+const handleShopNow = async () => {
     try {
-      const res = await Api.get("/users/me");
+        const res = await Api.get("/users/me");
 
-      if (res.data.user.isAdmin) {
-        navigate("/admin");
-      } else {
-        navigate("/Productpage");
-      }
+        if (res.data.user.isAdmin) {
+            navigate("/admin");
+        } else {
+            navigate("/Productpage");
+        }
     } catch (error) {
-      navigate("/Loginpage");
+        if (error.response?.status === 401) {
+            navigate("/Loginpage");
+        } else {
+            console.log(error);
+            alert("Something went wrong. Please try again.");
+        }
     }
-  };
+};
 
   return (
     <div>

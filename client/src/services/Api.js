@@ -15,12 +15,4 @@ export function getProductImageUrl(image) {
     return `${Api.defaults.baseURL}/uploads/${filename}`;
 }
 
-Api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
-
 export default Api;

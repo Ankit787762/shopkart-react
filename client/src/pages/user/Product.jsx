@@ -28,22 +28,22 @@ useEffect(() => {
 
 
 const addToCart = async (product) => {
-  if (!localStorage.getItem("token")) {
-    navigate("/Loginpage");
-    return;
-  }
+    try {
+        await Api.post("/carts/addtocart", {
+            productid: product._id,
+            quantity: 1,
+        });
 
-  try {
-    await Api.post("/carts/addtocart", {
-      productid: product._id,
-      quantity: 1,
-    });
+        navigate("/Cartpage");
+    } catch (error) {
+        if (error.response?.status === 401) {
+            navigate("/Loginpage");
+            return;
+        }
 
-    navigate("/Cartpage");
-  } catch (error) {
-    console.log(error);
-    alert(error.response?.data?.message || "Unable to add this product to your cart. Please try again.");
-  }
+        console.log(error);
+        alert(error.response?.data?.message || "Unable to add product to cart.");
+    }
 };
  
 
