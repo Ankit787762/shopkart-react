@@ -4,24 +4,24 @@ import Api from "../services/Api";
 function Featured() {
   const navigate = useNavigate();
 
-  const handleBuyNow = async () => {
-    if (!localStorage.getItem("token")) {
-      navigate("/Loginpage");
-      return;
-    }
+const handleBuyNow = async () => {
+  try {
+    const res = await Api.get("/users/me");
 
-    try {
-      const res = await Api.get("/users/me");
-
-      if (res.data.user.isAdmin) {
-        navigate("/admin");
-      } else {
-        navigate("/Productpage");
-      }
-    } catch (error) {
-      navigate("/Loginpage");
+    if (res.data.user.isAdmin) {
+      navigate("/admin");
+    } else {
+      navigate("/Productpage");
     }
-  };
+  } catch (error) {
+    if (error.response?.status === 401) {
+      navigate("/Loginpage");
+    } else {
+      console.log(error);
+      alert("Something went wrong. Please try again.");
+    }
+  }
+};
 
   const featuredProducts = [
     {
