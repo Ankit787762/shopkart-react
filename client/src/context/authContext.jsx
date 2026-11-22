@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import Api from "../services/Api";
 
@@ -6,7 +7,6 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
 
-    // Restore login when app starts / page refreshes
     useEffect(() => {
         const checkUser = async () => {
             try {
@@ -20,10 +20,7 @@ export function AuthProvider({ children }) {
         checkUser();
     }, []);
 
-    const login = (userData, token) => {
-        if (token) {
-            localStorage.setItem("token", token);
-        }
+    const login = (userData) => {
         setUser(userData);
     };
 
@@ -33,9 +30,6 @@ export function AuthProvider({ children }) {
             setUser(null);
         } catch (error) {
             console.log(error);
-        } finally {
-            localStorage.removeItem("token");
-            setUser(null);
         }
     };
 
